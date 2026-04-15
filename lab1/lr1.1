@@ -1,0 +1,36 @@
+#include <iostream>
+#include <thread>
+#include <chrono>
+
+using namespace std;
+
+void printNumbers(const string& name, int start, int end) {
+    for (int i = start; i <= end; ++i) {
+        cout << "Поток " << name << ": " << i << endl;
+        this_thread::sleep_for(chrono::milliseconds(300));
+    }
+    cout << "Поток " << name << " завершил работу" << endl;
+}
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+    cout << "Основной поток - запуск" << endl;
+
+    thread thread1(printNumbers, "A", 1, 5);  
+    thread thread2(printNumbers, "B", 1, 5);  
+
+    // detach
+    thread1.detach();  
+    cout << "Основной поток - поток A detach" << endl;
+
+    // join для второго потока
+   thread2.join();  //если убрать его по идее все должно сразу завершится, но 5 сек задержка все это круто спасает и поток успевает завершится хеппи енд 
+    cout << "Основной поток - поток B завершён join" << endl;
+
+//задержка перед завершением
+    cout << "Основной поток - задержка 5 секунд перед выходом" << endl;
+    this_thread::sleep_for(chrono::seconds(5)); 
+
+    cout << "Основной поток- завершение" << endl;
+    return 0;
+}
